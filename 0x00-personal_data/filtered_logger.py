@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 """ Regex module """
 import re
-from typing import List, Tuple
+from typing import List
 import logging
+
+
+PII_FIELDS: List[str] = ('name', 'email', 'phone', 'ssn', 'last_login')
 
 
 def filter_datum(fields: List[str], redaction: str,
@@ -12,6 +15,17 @@ def filter_datum(fields: List[str], redaction: str,
         message = re.sub(rf'{field}=(.*?){separator}',
                          f'{field}={redaction}{separator}', message)
     return message
+
+
+def get_logger() -> logging.Logger:
+    """Returns a logging object"""
+    logger = logging.getLogger('user_data')
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    stream = logging.StreamHandler()
+    stream.setFormatter(RedactingFormatter(PII_FIELDS))
+    logger.addHandler(stream)
+    return logger
 
 
 class RedactingFormatter(logging.Formatter):
