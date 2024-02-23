@@ -28,16 +28,17 @@ class BasicAuth(Auth):
     def decode_base64_authorization_header(
             self, base64_authorization_header: str) -> str:
         """decode_base64_authorization_header method"""
-        if not base64_authorization_header or \
-                not isinstance(base64_authorization_header, str):
+        if not base64_authorization_header:
+            return None
+
+        if not isinstance(base64_authorization_header, str):
             return None
 
         try:
             decoded_bytes = base64.b64decode(base64_authorization_header)
             decoded_string = decoded_bytes.decode('utf-8')
-            print(decoded_bytes)
             return decoded_string
-        except base64.binascii.Error:
+        except (base64.binascii.Error, UnicodeDecodeError):
             return None
 
     def extract_user_credentials(
@@ -65,3 +66,15 @@ class BasicAuth(Auth):
             if valid_users[0].is_valid_password(user_pwd):
                 return valid_users[0]
         return None
+
+    def current_user(self, request=None) -> TypeVar('User'):
+        """current_user method"""
+        authorization_header = self.authorization_header(request)
+        base64_authorization_header = self.extract_base64_authorization_header(
+            authorization_header)
+        decoded = self.decode_base64_authorization_header(
+            base64_authorization_header)
+        user_credentials = self.extract_user_credentials(decoded)
+        user_email = user_credentials[0]
+        user_pwd = user_credentials[1]
+        return self.user_object_from_credentials(user_email, user_pwd)
