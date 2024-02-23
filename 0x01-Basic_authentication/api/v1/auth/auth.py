@@ -15,10 +15,10 @@ class Auth():
         """require_auth method"""
         if path is None or excluded_paths is None:
             return True
-        
+
         if path in excluded_paths or f'{path}/' in excluded_paths:
             return False
-        
+
         for excluded_path in excluded_paths:
             if excluded_path[-1] == '*':
                 if excluded_path[:-1] in path:
