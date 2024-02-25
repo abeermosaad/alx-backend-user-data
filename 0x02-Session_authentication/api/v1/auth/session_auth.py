@@ -14,6 +14,7 @@ class SessionAuth(Auth):
         super().__init__()
 
     def create_session(self, user_id: str = None) -> str:
+        """create_session method"""
         if not user_id:
             return None
 
