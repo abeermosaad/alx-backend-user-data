@@ -32,6 +32,5 @@ class SessionAuth(Auth):
 
         if not isinstance(session_id, str):
             return None
-        print(self.user_id_by_session_id)
 
         return self.user_id_by_session_id.get(session_id)
