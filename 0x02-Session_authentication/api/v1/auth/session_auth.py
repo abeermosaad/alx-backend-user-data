@@ -9,5 +9,3 @@ class SessionAuth(Auth):
     def __init__(self) -> None:
         """init method"""
         super().__init__()
-
-    
